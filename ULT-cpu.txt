@@ -1,0 +1,309 @@
+NOTE: Some of this documentation is outdated.
+
+0b0000 imm +1
+0b0001 imm* +2
+0b0010 reg +0
+0b0011 reg* +1
+0b0100 imm+reg +1
+0b0101 imm+reg* +2
+0b0110 reg+reg +1
+0b0111 reg+reg* +2
+0b1000 imm-reg +1
+0b1001 imm-reg* +2
+0b1010 reg-reg +1
+0b1011 reg-reg* +2
+0b1100 imm•reg +2
+0b1101 imm•reg* +3
+0b1110 reg•reg +1
+0b1111 reg•reg* +2
+
+Code | 32-bit | 16-bit | 8-bit
+-----|--------|--------|------
+0x00 | rAB    | rA     | rAL
+0x01 | rCD    | rC     | rCL
+0x02 | rEF    | rE     | rEL
+0x03 | rGH    | rG     | rGL
+0x04 | rIJ    | rI     | rIL
+0x05 | rXY    | rX     | rXL
+0x06 | rPC    | rK     | rAH
+0x07 | rSP    | rM     | rCH
+0x08 | rSF    | rO     | rEH
+0x09 | rST    | rQ     | rGH
+0x0A | rkl    | rB     | rBL
+0x0B | rmn    | rD     | rDL
+0x0C | rop    | rF     | rFL
+0x0D | rqr    | rH     | rHL
+0x0E | ruv    | rJ     | rJL
+0x0F | r01    | rY     | rYL
+0x10 | r02    | rL     | rBH
+0x11 | r03    | rN     | rDH
+0x12 | r04    | rP     | rFH
+0x13 | r05    | rR     | rHH
+0x14 | r06    | rV     | rJH
+0x15 | r07    | r01L   | rYH
+
+default size is 32-bit
+
+512 Interrupts
+
+# Base Instructions and 32-bit Arithmetic
+
+lod dest, src | +3 dest=reg, src=any | 0x0000mMaabbbbbbbb
+sto dest, src | +4 dest=!reg, src=reg | 0x0001mMaaaaaaaabb
+mov dest, src | +2 dest=reg, src=reg | 0x0002mMaabb000000
+inc AB +1
+icc AB +1
+dec AB +1
+dcb AB +1
+add AB, src 
+adc AB, src
+sub AB, src
+sbb AB, src
+mul dest, AB, src | 0x000AmMaaaaaaaacccccccc
+mls dest, AB, src
+div AB, src
+dvs AB, src
+mod AB, src
+mds AB, src
+dvm dest, AB, src | Combined divide and modulo
+dms dest, AB, src | Signed combined divide and modulo
+rem dest, src | remainder of division
+rms dest, src | signed ''
+dvr dest1, dest2, src |
+drs dest1, dest2, src |
+cpl AB
+and AB, src
+ior AB, src
+xor AB, src
+bst AB, src
+brs AB, src
+bts AB, src
+shl AB, src
+asr AB, src
+lsr AB, src
+rtl AB, src | Rotate Left
+rtr AB, src | Rotate Right
+rlc AB, src | Rotate Left w/ Carry
+rrc AB, src | Rotate Right w/ Carry
+cmp AB, src
+jmp src
+cjp cond, src | Conditional Jump
+cal src | Call
+ccl cond, src | Conditional Call
+ret | Return
+irt | Interrupt Return
+crt cond | Conditional Return
+cir cond | Conditional Iterrupt Return
+ien | Interrupts Enable
+idi | Interrupts Disable
+iti src | Interrupt Table Initialize
+imi src | Interrupt Mask Initialize
+int src | Trigger Interrupt
+psh src | Push onto Stack
+psr src | Push registers onto Stack
+pzm src | Push Zero Multiple bytes onto stack.
+pop | Pop from Stack
+ppb src | Pop bytes from Stack
+pek dest | Peek top of Stack
+pko dest, src | Peek offset from top of Stack
+ppr src | Pop registers from Stack
+out s1, s2 | output on port s1 the byte s2
+inp AB, s | input on port s to register AB
+hlt
+brk
+nop | | 0xfffe0000
+
+# 8-bit Arithmetic
+
+mov8 d, s | 0x1000mMaabb000000
+inc8 AH
+icc8 AH
+dec8 AH
+dcb8 AH
+add8 AH, s
+adc8 AH, s
+sub8 AH, s
+sbb8 AH, s
+mul8 d, AH, s
+mls8 d, AH, s
+div8 AH, s
+dvs8 AH, s
+mod8 AH, s
+mds8 AH, s
+dvm8 d, AH, s
+dms8 d, AH, s
+cpl8 AH
+and8 AH, s
+ior8 AH, s
+xor8 AH, s
+bst8 AH, s
+brs8 AH, s
+bts8 AH, s
+shl8 AH, s
+asr8 AH, s
+lsr8 AH, s
+rtl8 AH, s
+rtr8 AH, s
+rlc8 AH, s
+rrc8 AH, s
+cmp8 AH, s
+psh8 AH, s
+pop8
+pek8 d
+pko8 d, s
+
+# 16-bit Arithmetic
+
+lod16 | 0x2000
+sto16 | 0x2001
+mov16 | 0x2002
+inc16 A
+icc16 A
+dec16 A
+dcb16 A
+add16 A, s
+adc16 A, s
+sub16 A, s
+sbb16 A, s
+mul16 d, A, s
+mls16 d, A, s
+div16 A, s
+dvs16 A, s
+mod16 A, s
+mds16 A, s
+dvm16 d, A, s
+dms16 d, A, s
+cpl16 A
+and16 A, s
+ior16 A, s
+xor16 A, s
+bst16 A, s
+brs16 A, s
+bts16 A, s
+shl16 A, s
+asr16 A, s
+lsr16 A, s
+rtl16 A, s
+rtr16 A, s
+rlc16 A, s
+rrc16 A, s
+cmp16 A, s
+psh16 A, s
+pop16
+pek16 d
+pko16 d, s
+
+# 32-bit Float Arithmetic
+
+incf AH
+decf AH
+addf AH, s
+subf AH, s
+mulf AH, s
+divf AH, s
+modf AH, s
+dvmf d, AH, s
+sincf AH
+sdecf AH
+saddf AH, s
+ssubf AH, s
+smulf AH, s
+sdivf AH, s
+smodf AH, s
+sdvmf d, AH, s
+cmpf AH, s
+fabsf AH
+nanf AH
+fmaxf AH, s
+fminf AH, s
+expf AH
+exp2f AH
+expm1f AH
+logf AH
+log10f AH
+log2f AH
+log1pf AH
+powf AH, s
+sqrtf AH
+cbrtf AH
+hypotf AH, s
+sinf AH
+cosf AH
+tanf AH
+asinf AH
+acosf AH
+atanf AH
+atan2f AH, s
+sinhf AH
+coshf AH
+tanhf AH
+asinhf AH
+acoshf AH
+atanhf AH
+errf AH
+erfcf AH
+tgammaf AH
+lgammaf AH
+ceilf AH
+floorf AH
+truncf AH
+roundf AH
+frexpf AH, d
+ldexpf AH, s
+ilogbf AH
+logbf AH
+nafterf AH, s
+f2if AH | Float to Integer
+i2ff AH | Integer to Float
+
+# 16-bit x 2 SIMD Arithmetic
+
+inc16x2 AB
+dec16x2 AB
+add16x2 AB, s
+sub16x2 AB, s
+mul16x2 AB, s
+mls16x2 AB, s
+div16x2 AB, s
+dvs16x2 AB, s
+mod16x2 AB, s
+mds16x2 AB, s
+dvm16x2 d, AB, s
+dms16x2 d, AB, s
+rem16x2 d, s
+rms16x2 d, s
+dvr16x2 d1, d2, s
+drs16x2 d1, d2, s
+bst16x2 AB, s
+brs16x2 AB, s
+shl16x2 AB, s
+asr16x2 AB, s
+lsr16x2 AB, s
+rtl16x2 AB, s
+rtr16x2 AB, s
+
+# 8-bit x 4 SIMD Arithmetic
+
+inc8x4 AB
+dec8x4 AB
+add8x4 AB, s
+sub8x4 AB, s
+mul8x4 d1, d2, AB, s
+mls8x4 d1, d2, AB, s
+div8x4 AB, s
+dvs8x4 AB, s
+mod8x4 AB, s
+mds8x4 AB, s
+dvm8x4 d, AB, s
+dms8x4 d, AB, s
+rem8x4 d, s
+rms8x4 d, s
+dvr8x4 d1, d2, s
+drs8x4 d1, d2, s
+bst8x4 AB, s
+brs8x4 AB, s
+shl8x4 AB, s
+asr8x4 AB, s
+lsr8x4 AB, s
+rtl8x4 AB, s
+rtr8x4 AB, s
