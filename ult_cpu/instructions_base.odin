@@ -1,5 +1,6 @@
 package ult_cpu
 
+import "core:fmt"
 InstError :: union {
     InstErrorNone,
     InstErrorHalt,
@@ -519,6 +520,8 @@ inst_cmp :: proc(ucpu: ^Cpu, arg_list: ^ArgList) -> InstError {
         set_flag(ucpu, .NE)
     }
 
+    //fmt.printfln("ST: %032b", u32(ucpu^.regs.r32.ST))
+
     return InstErrorNone{}
 }
 
@@ -542,8 +545,10 @@ inst_cjp :: proc(ucpu: ^Cpu, arg_list: ^ArgList) -> InstError {
 inst_cal :: proc(ucpu: ^Cpu, arg_list: ^ArgList) -> InstError {
     val := InstArg_get_u32(&arg_list^.Arg1, ucpu)
     //Cpu_push_u32(ucpu, u32(ucpu^.regs.r32.PC))
-    Cpu_push_u32(ucpu, Cpu_next_pc(ucpu))
+    npc := Cpu_next_pc(ucpu)
+    Cpu_push_u32(ucpu, npc)
     ucpu^.regs.r32.PC = u32be(val)
+    dump_stack(ucpu)
     return InstErrorNone{}
 }
 
@@ -552,8 +557,10 @@ inst_ccl :: proc(ucpu: ^Cpu, arg_list: ^ArgList) -> InstError {
     val := InstArg_get_u32(&arg_list^.Arg2, ucpu)
     if test_flag(ucpu, cnd) {
         //Cpu_push_u32(ucpu, u32(ucpu^.regs.r32.PC))
-        Cpu_push_u32(ucpu, Cpu_next_pc(ucpu))
+        npc := Cpu_next_pc(ucpu)
+        Cpu_push_u32(ucpu, npc)
         ucpu^.regs.r32.PC = u32be(val)
+        dump_stack(ucpu)
     } else {
         ucpu^.regs.r32.PC = u32be(Cpu_next_pc(ucpu))
     }
@@ -561,24 +568,30 @@ inst_ccl :: proc(ucpu: ^Cpu, arg_list: ^ArgList) -> InstError {
 }
 
 inst_ret :: proc(ucpu: ^Cpu, arg_list: ^ArgList) -> InstError {
-    ucpu^.regs.r32.PC = u32be(Cpu_pop_u32(ucpu))
+    npc := Cpu_pop_u32(ucpu)
+    ucpu^.regs.r32.PC = u32be(npc)
+    dump_stack(ucpu)
     return InstErrorNone{}
 }
 
 inst_irt :: proc(ucpu: ^Cpu, arg_list: ^ArgList) -> InstError {
     // TODO: Investigate whether `irt` requires more to be done.
-    ucpu^.regs.r32.PC = u32be(Cpu_pop_u32(ucpu))
+    npc := Cpu_pop_u32(ucpu)
+    ucpu^.regs.r32.PC = u32be(npc)
 
     // Turn off I2 flag if on
     reset_flag(ucpu, .I2)
 
+    dump_stack(ucpu)
     return InstErrorNone{}
 }
 
 inst_crt :: proc(ucpu: ^Cpu, arg_list: ^ArgList) -> InstError {
     cnd := FlagEnc(InstArg_get_u32(&arg_list^.Arg1, ucpu))
     if test_flag(ucpu, cnd) {
-        ucpu^.regs.r32.PC = u32be(Cpu_pop_u32(ucpu))
+        npc := Cpu_pop_u32(ucpu)
+        ucpu^.regs.r32.PC = u32be(npc)
+        dump_stack(ucpu)
     } else {
         ucpu^.regs.r32.PC = u32be(Cpu_next_pc(ucpu))
     }
@@ -589,7 +602,13 @@ inst_cir :: proc(ucpu: ^Cpu, arg_list: ^ArgList) -> InstError {
     // TODO: Investigate whether `cir` requires more to be done.
     cnd := FlagEnc(InstArg_get_u32(&arg_list^.Arg1, ucpu))
     if test_flag(ucpu, cnd) {
-        ucpu^.regs.r32.PC = u32be(Cpu_pop_u32(ucpu))
+        npc := Cpu_pop_u32(ucpu)
+        ucpu^.regs.r32.PC = u32be(npc)
+
+        // Turn off I2 flag if on
+        reset_flag(ucpu, .I2)
+
+        dump_stack(ucpu)
     } else {
         ucpu^.regs.r32.PC = u32be(Cpu_next_pc(ucpu))
     }
@@ -632,6 +651,7 @@ inst_int :: proc(ucpu: ^Cpu, arg_list: ^ArgList) -> InstError {
 inst_psh :: proc(ucpu: ^Cpu, arg_list: ^ArgList) -> InstError {
     val := InstArg_get_u32(&arg_list^.Arg1, ucpu)
     Cpu_push(ucpu, val)
+    dump_stack(ucpu)
     return InstErrorNone{}
 }
 
@@ -643,6 +663,7 @@ inst_psr :: proc(ucpu: ^Cpu, arg_list: ^ArgList) -> InstError {
             Cpu_push_u32(ucpu, u32(get_reg32(&ucpu^.regs, u8(i))^))
         }
     }
+    dump_stack(ucpu)
     return InstErrorNone{}
 }
 
@@ -651,11 +672,13 @@ inst_pzm :: proc(ucpu: ^Cpu, arg_list: ^ArgList) -> InstError {
     for i in 0 ..< val {
         Cpu_push_u8(ucpu, 0)
     }
+    dump_stack(ucpu)
     return InstErrorNone{}
 }
 
 inst_pop :: proc(ucpu: ^Cpu, arg_list: ^ArgList) -> InstError {
     Cpu_pop_u32(ucpu)
+    dump_stack(ucpu)
     return InstErrorNone{}
 }
 
@@ -664,6 +687,7 @@ inst_ppb :: proc(ucpu: ^Cpu, arg_list: ^ArgList) -> InstError {
     for i in 0 ..< val {
         Cpu_pop_u8(ucpu)
     }
+    dump_stack(ucpu)
     return InstErrorNone{}
 }
 
@@ -687,6 +711,7 @@ inst_ppr :: proc(ucpu: ^Cpu, arg_list: ^ArgList) -> InstError {
             get_reg32(&ucpu^.regs, u8(i))^ = u32be(Cpu_pop_u32(ucpu))
         }
     }
+    dump_stack(ucpu)
     return InstErrorNone{}
 }
 

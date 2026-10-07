@@ -1,5 +1,6 @@
 package ult_cpu
 
+import "core:fmt"
 import "core:mem"
 
 Read8Proc :: proc(self: ^Mem, ucpu: ^Cpu, addr: u32) -> u8
@@ -55,6 +56,12 @@ DefaultMem :: proc(size: u64) -> IDefaultMem {
             raddr := int(addr) % len(dmem.data)
             ucpu^.ticks += 2
             dmem.data[raddr] = val
+
+            /*if (addr >= 0x600000) && (addr < 0x600100) {
+                if val == 0 {
+                    fmt.println("Writing Zero inside debug output.")
+                }
+            }*/
         },
         write8_raw = proc(self: ^Mem, ucpu: ^Cpu, addr: u32, val: u8) {
             dmem := self.(IDefaultMem)

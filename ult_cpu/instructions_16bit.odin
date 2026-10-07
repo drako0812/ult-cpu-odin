@@ -1,5 +1,6 @@
 package ult_cpu
 
+import "core:fmt"
 inst_mov16 :: proc(ucpu: ^Cpu, arg_list: ^ArgList) -> InstError {
     InstArg_set_u16(&arg_list^.Arg1, ucpu, InstArg_get_u16(&arg_list^.Arg2, ucpu))
     return InstErrorNone{}
@@ -366,17 +367,21 @@ inst_cmp16 :: proc(ucpu: ^Cpu, arg_list: ^ArgList) -> InstError {
         set_flag(ucpu, .NE)
     }
 
+    //fmt.printfln("ST: %032b", u32(ucpu^.regs.r32.ST))
+
     return InstErrorNone{}
 }
 
 inst_psh16 :: proc(ucpu: ^Cpu, arg_list: ^ArgList) -> InstError {
     val := InstArg_get_u16(&arg_list^.Arg1, ucpu)
     Cpu_push(ucpu, val)
+    dump_stack(ucpu)
     return InstErrorNone{}
 }
 
 inst_pop16 :: proc(ucpu: ^Cpu, arg_list: ^ArgList) -> InstError {
     Cpu_pop_u16(ucpu)
+    dump_stack(ucpu)
     return InstErrorNone{}
 }
 

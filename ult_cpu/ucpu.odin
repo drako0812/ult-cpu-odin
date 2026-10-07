@@ -10,6 +10,7 @@ OnPortReadProc :: #type proc(ucpu: ^Cpu, port: u16) -> u8
 Cpu :: struct {
     regs:              Regs,
     mem:               Mem,
+    io:                IOData,
     int_table_enabled: bool,
     int_table_loc:     u32,
     int_mask_enabled:  bool,
@@ -120,18 +121,18 @@ build_arg :: proc(ite: ^InstTableEntry, ucpu: ^Cpu, atype: AddrMode, anum: int, 
             case .ImmPtr: return ImmPtrArg{value = read32(&ucpu^.mem, ucpu, npc)}, 4
             case .Reg: return RegArg{idx = read8(&ucpu^.mem, ucpu, npc)}, 1
             case .RegPtr: return RegPtrArg{idx = read8(&ucpu^.mem, ucpu, npc)}, 1
-            case .ImmPlusReg: return ImmPlusRegArg{value = read32(&ucpu^.mem, ucpu, npc), reg = read8(&ucpu^.mem, ucpu, 4)}, 5
-            case .ImmPlusRegPtr: return ImmPlusRegPtrArg{value = read32(&ucpu^.mem, ucpu, npc), reg = read8(&ucpu^.mem, ucpu, 4)}, 5
-            case .RegPlusReg: return RegPlusRegArg{reg1 = read8(&ucpu^.mem, ucpu, npc), reg2 = read8(&ucpu^.mem, ucpu, 1)}, 2
-            case .RegPlusRegPtr: return RegPlusRegPtrArg{reg1 = read8(&ucpu^.mem, ucpu, npc), reg2 = read8(&ucpu^.mem, ucpu, 1)}, 2
-            case .ImmMinusReg: return ImmMinusRegArg{value = read32(&ucpu^.mem, ucpu, npc), reg = read8(&ucpu^.mem, ucpu, 4)}, 5
-            case .ImmMinusRegPtr: return ImmMinusRegPtrArg{value = read32(&ucpu^.mem, ucpu, npc), reg = read8(&ucpu^.mem, ucpu, 4)}, 5
-            case .RegMinusReg: return RegMinusRegArg{reg1 = read8(&ucpu^.mem, ucpu, npc), reg2 = read8(&ucpu^.mem, ucpu, 1)}, 2
-            case .RegMinusRegPtr: return RegMinusRegPtrArg{reg1 = read8(&ucpu^.mem, ucpu, npc), reg2 = read8(&ucpu^.mem, ucpu, 1)}, 2
-            case .ImmTimesReg: return ImmTimesRegArg{value = read32(&ucpu^.mem, ucpu, npc), reg = read8(&ucpu^.mem, ucpu, 4)}, 5
-            case .ImmTimesRegPtr: return ImmTimesRegPtrArg{value = read32(&ucpu^.mem, ucpu, npc), reg = read8(&ucpu^.mem, ucpu, 4)}, 5
-            case .RegTimesReg: return RegTimesRegArg{reg1 = read8(&ucpu^.mem, ucpu, npc), reg2 = read8(&ucpu^.mem, ucpu, 1)}, 2
-            case .RegTimesRegPtr: return RegTimesRegPtrArg{reg1 = read8(&ucpu^.mem, ucpu, npc), reg2 = read8(&ucpu^.mem, ucpu, 1)}, 2
+            case .ImmPlusReg: return ImmPlusRegArg{value = read32(&ucpu^.mem, ucpu, npc), reg = read8(&ucpu^.mem, ucpu, npc + 4)}, 5
+            case .ImmPlusRegPtr: return ImmPlusRegPtrArg{value = read32(&ucpu^.mem, ucpu, npc), reg = read8(&ucpu^.mem, ucpu, npc + 4)}, 5
+            case .RegPlusReg: return RegPlusRegArg{reg1 = read8(&ucpu^.mem, ucpu, npc), reg2 = read8(&ucpu^.mem, ucpu, npc + 1)}, 2
+            case .RegPlusRegPtr: return RegPlusRegPtrArg{reg1 = read8(&ucpu^.mem, ucpu, npc), reg2 = read8(&ucpu^.mem, ucpu, npc + 1)}, 2
+            case .ImmMinusReg: return ImmMinusRegArg{value = read32(&ucpu^.mem, ucpu, npc), reg = read8(&ucpu^.mem, ucpu, npc + 4)}, 5
+            case .ImmMinusRegPtr: return ImmMinusRegPtrArg{value = read32(&ucpu^.mem, ucpu, npc), reg = read8(&ucpu^.mem, ucpu, npc + 4)}, 5
+            case .RegMinusReg: return RegMinusRegArg{reg1 = read8(&ucpu^.mem, ucpu, npc), reg2 = read8(&ucpu^.mem, ucpu, npc + 1)}, 2
+            case .RegMinusRegPtr: return RegMinusRegPtrArg{reg1 = read8(&ucpu^.mem, ucpu, npc), reg2 = read8(&ucpu^.mem, ucpu, npc + 1)}, 2
+            case .ImmTimesReg: return ImmTimesRegArg{value = read32(&ucpu^.mem, ucpu, npc), reg = read8(&ucpu^.mem, ucpu, npc + 4)}, 5
+            case .ImmTimesRegPtr: return ImmTimesRegPtrArg{value = read32(&ucpu^.mem, ucpu, npc), reg = read8(&ucpu^.mem, ucpu, npc + 4)}, 5
+            case .RegTimesReg: return RegTimesRegArg{reg1 = read8(&ucpu^.mem, ucpu, npc), reg2 = read8(&ucpu^.mem, ucpu, npc + 1)}, 2
+            case .RegTimesRegPtr: return RegTimesRegPtrArg{reg1 = read8(&ucpu^.mem, ucpu, npc), reg2 = read8(&ucpu^.mem, ucpu, npc + 1)}, 2
             }
     case .B32: switch atype {
             case .Imm:
@@ -146,18 +147,18 @@ build_arg :: proc(ite: ^InstTableEntry, ucpu: ^Cpu, atype: AddrMode, anum: int, 
                 return ret, 4
             case .Reg: return RegArg{idx = read8(&ucpu^.mem, ucpu, npc)}, 1
             case .RegPtr: return RegPtrArg{idx = read8(&ucpu^.mem, ucpu, npc)}, 1
-            case .ImmPlusReg: return ImmPlusRegArg{value = read32(&ucpu^.mem, ucpu, npc), reg = read8(&ucpu^.mem, ucpu, 4)}, 5
-            case .ImmPlusRegPtr: return ImmPlusRegPtrArg{value = read32(&ucpu^.mem, ucpu, npc), reg = read8(&ucpu^.mem, ucpu, 4)}, 5
-            case .RegPlusReg: return RegPlusRegArg{reg1 = read8(&ucpu^.mem, ucpu, npc), reg2 = read8(&ucpu^.mem, ucpu, 1)}, 2
-            case .RegPlusRegPtr: return RegPlusRegPtrArg{reg1 = read8(&ucpu^.mem, ucpu, npc), reg2 = read8(&ucpu^.mem, ucpu, 1)}, 2
-            case .ImmMinusReg: return ImmMinusRegArg{value = read32(&ucpu^.mem, ucpu, npc), reg = read8(&ucpu^.mem, ucpu, 4)}, 5
-            case .ImmMinusRegPtr: return ImmMinusRegPtrArg{value = read32(&ucpu^.mem, ucpu, npc), reg = read8(&ucpu^.mem, ucpu, 4)}, 5
-            case .RegMinusReg: return RegMinusRegArg{reg1 = read8(&ucpu^.mem, ucpu, npc), reg2 = read8(&ucpu^.mem, ucpu, 1)}, 2
-            case .RegMinusRegPtr: return RegMinusRegPtrArg{reg1 = read8(&ucpu^.mem, ucpu, npc), reg2 = read8(&ucpu^.mem, ucpu, 1)}, 2
-            case .ImmTimesReg: return ImmTimesRegArg{value = read32(&ucpu^.mem, ucpu, npc), reg = read8(&ucpu^.mem, ucpu, 4)}, 5
-            case .ImmTimesRegPtr: return ImmTimesRegPtrArg{value = read32(&ucpu^.mem, ucpu, npc), reg = read8(&ucpu^.mem, ucpu, 4)}, 5
-            case .RegTimesReg: return RegTimesRegArg{reg1 = read8(&ucpu^.mem, ucpu, npc), reg2 = read8(&ucpu^.mem, ucpu, 1)}, 2
-            case .RegTimesRegPtr: return RegTimesRegPtrArg{reg1 = read8(&ucpu^.mem, ucpu, npc), reg2 = read8(&ucpu^.mem, ucpu, 1)}, 2
+            case .ImmPlusReg: return ImmPlusRegArg{value = read32(&ucpu^.mem, ucpu, npc), reg = read8(&ucpu^.mem, ucpu, npc + 4)}, 5
+            case .ImmPlusRegPtr: return ImmPlusRegPtrArg{value = read32(&ucpu^.mem, ucpu, npc), reg = read8(&ucpu^.mem, ucpu, npc + 4)}, 5
+            case .RegPlusReg: return RegPlusRegArg{reg1 = read8(&ucpu^.mem, ucpu, npc), reg2 = read8(&ucpu^.mem, ucpu, npc + 1)}, 2
+            case .RegPlusRegPtr: return RegPlusRegPtrArg{reg1 = read8(&ucpu^.mem, ucpu, npc), reg2 = read8(&ucpu^.mem, ucpu, npc + 1)}, 2
+            case .ImmMinusReg: return ImmMinusRegArg{value = read32(&ucpu^.mem, ucpu, npc), reg = read8(&ucpu^.mem, ucpu, npc + 4)}, 5
+            case .ImmMinusRegPtr: return ImmMinusRegPtrArg{value = read32(&ucpu^.mem, ucpu, npc), reg = read8(&ucpu^.mem, ucpu, npc + 4)}, 5
+            case .RegMinusReg: return RegMinusRegArg{reg1 = read8(&ucpu^.mem, ucpu, npc), reg2 = read8(&ucpu^.mem, ucpu, npc + 1)}, 2
+            case .RegMinusRegPtr: return RegMinusRegPtrArg{reg1 = read8(&ucpu^.mem, ucpu, npc), reg2 = read8(&ucpu^.mem, ucpu, npc + 1)}, 2
+            case .ImmTimesReg: return ImmTimesRegArg{value = read32(&ucpu^.mem, ucpu, npc), reg = read8(&ucpu^.mem, ucpu, npc + 4)}, 5
+            case .ImmTimesRegPtr: return ImmTimesRegPtrArg{value = read32(&ucpu^.mem, ucpu, npc), reg = read8(&ucpu^.mem, ucpu, npc + 4)}, 5
+            case .RegTimesReg: return RegTimesRegArg{reg1 = read8(&ucpu^.mem, ucpu, npc), reg2 = read8(&ucpu^.mem, ucpu, npc + 1)}, 2
+            case .RegTimesRegPtr: return RegTimesRegPtrArg{reg1 = read8(&ucpu^.mem, ucpu, npc), reg2 = read8(&ucpu^.mem, ucpu, npc + 1)}, 2
             }
     }
     assert(false, "Unreachable")
@@ -176,6 +177,9 @@ Cpu_quick_fetch :: proc(ucpu: ^Cpu) -> ^InstTableEntry {
 
 Cpu_fetch_instruction :: proc(ucpu: ^Cpu) -> (idata: InstData, pc: u32, ok: bool) {
     pc = u32(ucpu^.regs.r32.PC)
+    /*if (pc >= 0x0A) && (pc < 0x45) {
+        fmt.printfln("STRCPY: %08X", pc)
+    }*/
     inst_int := read16(&ucpu^.mem, ucpu, pc)
     inst := OpCode(inst_int)
     if ite, it_ok := InstTable[inst]; it_ok {
@@ -197,7 +201,7 @@ Cpu_fetch_instruction :: proc(ucpu: ^Cpu) -> (idata: InstData, pc: u32, ok: bool
                 arg1type := get_arg_type(arg_byte1 >> 4)
                 if arg1type in ite.Args.Arg1 {
                     new_pc_offset: u32 = 0
-                    idata.ArgList.Arg1, new_pc_offset = build_arg(&ite, ucpu, arg1type, 1, pc_offset)
+                    idata.ArgList.Arg1, new_pc_offset = build_arg(&ite, ucpu, arg1type, 1, pc + pc_offset)
                     pc_offset += new_pc_offset
                 } else {
                     return InstData{}, pc, false
@@ -206,7 +210,7 @@ Cpu_fetch_instruction :: proc(ucpu: ^Cpu) -> (idata: InstData, pc: u32, ok: bool
                 arg2type := get_arg_type(arg_byte1 & 0x0F)
                 if arg2type in ite.Args.Arg2 {
                     new_pc_offset: u32 = 0
-                    idata.ArgList.Arg2, new_pc_offset = build_arg(&ite, ucpu, arg2type, 2, pc_offset)
+                    idata.ArgList.Arg2, new_pc_offset = build_arg(&ite, ucpu, arg2type, 2, pc + pc_offset)
                     pc_offset += new_pc_offset
                 } else {
                     return InstData{}, pc, false
@@ -215,7 +219,7 @@ Cpu_fetch_instruction :: proc(ucpu: ^Cpu) -> (idata: InstData, pc: u32, ok: bool
                 arg3type := get_arg_type(arg_byte2 >> 4)
                 if arg3type in ite.Args.Arg3 {
                     new_pc_offset: u32 = 0
-                    idata.ArgList.Arg3, new_pc_offset = build_arg(&ite, ucpu, arg3type, 3, pc_offset)
+                    idata.ArgList.Arg3, new_pc_offset = build_arg(&ite, ucpu, arg3type, 3, pc + pc_offset)
                     pc_offset += new_pc_offset
                 } else {
                     return InstData{}, pc, false
@@ -224,7 +228,7 @@ Cpu_fetch_instruction :: proc(ucpu: ^Cpu) -> (idata: InstData, pc: u32, ok: bool
                 arg4type := get_arg_type(arg_byte2 & 0x0F)
                 if arg4type in ite.Args.Arg4 {
                     new_pc_offset: u32 = 0
-                    idata.ArgList.Arg4, new_pc_offset = build_arg(&ite, ucpu, arg4type, 4, pc_offset)
+                    idata.ArgList.Arg4, new_pc_offset = build_arg(&ite, ucpu, arg4type, 4, pc + pc_offset)
                     pc_offset += new_pc_offset
                 } else {
                     return InstData{}, pc, false
@@ -232,11 +236,11 @@ Cpu_fetch_instruction :: proc(ucpu: ^Cpu) -> (idata: InstData, pc: u32, ok: bool
             }
         }
 
-        idata.Data = &ite
+        idata.Data = &InstTable[inst]
         real_pc := u32(ucpu^.regs.r32.PC)
         ucpu^.instruction_sz = (pc + pc_offset) - real_pc
-        stk_top := read32_raw(&ucpu^.mem, ucpu, u32(ucpu^.regs.r32.SP))
-        fmt.printfln("OPC: %08X, NPC: %08X, STOP: %08X, SZ: %v", real_pc, pc + pc_offset, stk_top, ucpu^.instruction_sz)
+        //stk_top := read32_raw(&ucpu^.mem, ucpu, u32(ucpu^.regs.r32.SP))
+        //fmt.printfln("OPC: %08X, NPC: %08X, STOP: %08X, SZ: %v", real_pc, pc + pc_offset, stk_top, ucpu^.instruction_sz)
         return idata, pc + pc_offset, true
     } else {
         return InstData{}, pc, false
@@ -255,9 +259,9 @@ Cpu_tick :: proc(ucpu: ^Cpu) {
 
     // TODO: Don't assume any instructions have 0 for BaseTicks. We disabled this because BaseTicks was coming back as an insane number.
     //ucpu^.ticks += idata.Data^.BaseTicks
-    if ucpu^.ticks >= 1000 {
-        fmt.printfln("Excessive Ticks: Cpu_tick: %v", ucpu^.ticks)
-    }
+    // if ucpu^.ticks >= 1000 {
+    //     fmt.printfln("Excessive Ticks: Cpu_tick: %v", ucpu^.ticks)
+    // }
 
     switch _ in err {
     case InstErrorNone: break
@@ -268,7 +272,10 @@ Cpu_tick :: proc(ucpu: ^Cpu) {
 // Returns the number of ticks executed in the frame
 Cpu_frame :: proc(ucpu: ^Cpu, ticks_per_frame: u64) -> u64 {
     for ucpu^.ticks < ticks_per_frame {
+        //fmt.printf("%08X ", u32(ucpu^.regs.r32.PC))
+        prev_ticks := ucpu^.ticks
         Cpu_tick(ucpu)
+        io_update(ucpu, ucpu^.ticks - prev_ticks)
     }
     ret := ucpu^.ticks
     ucpu^.ticks = ucpu^.ticks - ticks_per_frame
@@ -289,7 +296,7 @@ Cpu_push_u8 :: proc(ucpu: ^Cpu, val: u8) {
     sp := i64(u32(ucpu^.regs.r32.SP))
     sp -= 1
     if sp == -1 {
-        sp = 0x800000 // TODO: Remove hard-coded value
+        sp = 0x800000 - 1 // TODO: Remove hard-coded value
     }
     write8(&ucpu^.mem, ucpu, u32(sp), val)
     ucpu^.regs.r32.SP = u32be(u32(sp))
@@ -317,6 +324,7 @@ Cpu_pop_u8 :: proc(ucpu: ^Cpu) -> u8 {
         sp = 0
     }
     ucpu^.regs.r32.SP = u32be(u32(sp))
+
     return ret
 }
 
@@ -394,12 +402,14 @@ Cpu_trigger_interrupt :: proc(ucpu: ^Cpu, interrupt: u16) -> bool {
     if !ucpu^.int_mask_enabled {
         // Always execute
         Cpu_push(ucpu, Cpu_next_pc(ucpu))
+        dump_stack(ucpu)
         return true
     }
 
     // Check if Interrupt is enabled in Mask
     if Cpu_check_interrupt_mask(ucpu, interrupt) {
         Cpu_push(ucpu, Cpu_next_pc(ucpu))
+        dump_stack(ucpu)
         return true
     }
 
@@ -433,6 +443,8 @@ Cpu_trigger_nmi :: proc(ucpu: ^Cpu, code: u16) -> bool {
     // Jump to address stored in 0x00000006
     addr := read32(&ucpu^.mem, ucpu, 0x00000006)
     ucpu^.regs.r32.PC = u32be(addr)
+
+    dump_stack(ucpu)
 
     return true
 }

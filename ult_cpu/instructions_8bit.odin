@@ -1,14 +1,52 @@
 package ult_cpu
 
+import "core:fmt"
 inst_mov8 :: proc(ucpu: ^Cpu, arg_list: ^ArgList) -> InstError {
     InstArg_set_u8(&arg_list^.Arg1, ucpu, InstArg_get_u8(&arg_list^.Arg2, ucpu))
     return InstErrorNone{}
+}
+
+dump_stack :: proc(ucpu: ^Cpu) {
+    /*pc := u32(ucpu^.regs.r32.PC)
+    sp := u32(ucpu^.regs.r32.SP)
+    fmt.printf("PC: %08X, SP: %08X [", pc, sp)
+    for sp != 0 {
+        fmt.printf("%02X ", read8_raw(&ucpu^.mem, ucpu, sp))
+        sp += 1
+        if sp == 0x800000 {
+            sp = 0
+        }
+    }
+    fmt.println("]")
+    //dump_frame(ucpu)
+    */
+}
+
+// NOTE: This will not work.
+dump_frame :: proc(ucpu: ^Cpu) {
+    sp := u32(ucpu^.regs.r32.SP)
+    sf := u32(ucpu^.regs.r32.SF)
+    sz := i64(sf) - i64(sp)
+    if sz < 0 {
+        fmt.printfln("SF: %08X, SP: %08X, size: 0 []", sf, sp)
+        return
+    }
+    fmt.printf("SF: %08X, SP: %08X, size: %v [", sf, sp, sz)
+    for i: i64 = 0; i < sz; i += 1 {
+        fmt.printf("%02X ", read8_raw(&ucpu^.mem, ucpu, u32(i64(sf) + i)))
+    }
+    fmt.println("]")
 }
 
 inst_lod8 :: proc(ucpu: ^Cpu, arg_list: ^ArgList) -> InstError {
     src := InstArg_get_u32(&arg_list^.Arg2, ucpu)
     val := read8(&ucpu^.mem, ucpu, src)
     InstArg_set_u8(&arg_list^.Arg1, ucpu, val)
+
+    sf := u32(ucpu^.regs.r32.SF)
+    //fmt.printfln(".src+SF = %08X, .dest+SF = %08X, [.src+SF] = %08X, [.dest+SF] = %08X", 4 + sf, 0 + sf, read32_raw(&ucpu^.mem, ucpu, 4 + sf), read32_raw(&ucpu^.mem, ucpu, 0 + sf))
+    //dump_stack(ucpu)
+    //dump_frame(ucpu)
     return InstErrorNone{}
 }
 
@@ -366,17 +404,21 @@ inst_cmp8 :: proc(ucpu: ^Cpu, arg_list: ^ArgList) -> InstError {
         set_flag(ucpu, .NE)
     }
 
+    //fmt.printfln("ST: %032b", u32(ucpu^.regs.r32.ST))
+
     return InstErrorNone{}
 }
 
 inst_psh8 :: proc(ucpu: ^Cpu, arg_list: ^ArgList) -> InstError {
     val := InstArg_get_u8(&arg_list^.Arg1, ucpu)
     Cpu_push(ucpu, val)
+    dump_stack(ucpu)
     return InstErrorNone{}
 }
 
 inst_pop8 :: proc(ucpu: ^Cpu, arg_list: ^ArgList) -> InstError {
     Cpu_pop_u8(ucpu)
+    dump_stack(ucpu)
     return InstErrorNone{}
 }
 

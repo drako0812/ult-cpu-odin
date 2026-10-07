@@ -5,10 +5,10 @@ import "core:fmt"
 import "vendor:raylib"
 
 //ULT_CPU_HZ :: 10000000 // 10 MHz
-//ULT_CPU_HZ :: 1000000 // Defaulting to 1 MHz for now
-//ULT_CPU_HZ :: 1000 // 1 KHz
-ULT_CPU_HZ :: 15 // 1 Tick per frame
-FPS_HZ :: 15
+ULT_CPU_HZ :: 1000000 // Defaulting to 1 MHz for now
+//ULT_CPU_HZ :: 6000 // 6 KHz
+//ULT_CPU_HZ :: 60 // 1 Tick per frame
+FPS_HZ :: 60
 ULT_CPU_TICKS_PER_FRAME :: (ULT_CPU_HZ / FPS_HZ) + 1
 
 ULT_DBG_OUT_ADDR :: 0x600000
@@ -22,13 +22,16 @@ draw_dbg_out :: proc(ucpu: ^ult_cpu.Cpu, font: raylib.Font, y: int) {
     lin := 0
     for addr < (ULT_DBG_OUT_ADDR + ULT_DBG_OUT_BYTES) {
         val := ult_cpu.read8_raw(&ucpu^.mem, ucpu, addr)
-        raylib.DrawTextCodepoint(font, rune(val), raylib.Vector2{f32(col * 8), f32(y + (lin * 8))}, 8, raylib.RAYWHITE)
+        raylib.DrawTextCodepoint(font, ult_cpu.CP437_TO_RUNE_TABLE[val], raylib.Vector2{f32(col * 8), f32(y + (lin * 8))}, 8, raylib.RAYWHITE)
+        //fmt.printf("%02X", val)
 
         addr += 1
         col += 1
         if col >= ULT_DBG_OUT_LINE_LEN {
             col = 0
             lin += 1
+            //fmt.println()
+            //fmt.println()
         }
     }
 }
@@ -44,8 +47,13 @@ main :: proc() {
 
     ucpu^.int_mask_enabled = false
     ucpu^.int_table_enabled = false
-    ucpu^.on_port_read = nil
-    ucpu^.on_port_write = nil
+    ucpu^.on_port_read = ult_cpu.io_read_port
+    ucpu^.on_port_write = ult_cpu.io_write_port
+    ucpu^.io = ult_cpu.IOData {
+        wait_active     = false,
+        wait_accum_temp = 0,
+        wait_accum      = 0,
+    }
     ucpu^.ticks = 0
 
     mem := ult_cpu.DefaultMem(0x800000)
@@ -115,7 +123,15 @@ main :: proc() {
         ite := ult_cpu.Cpu_quick_fetch(ucpu)
         raylib.DrawTextEx(
             font,
-            fmt.ctprintf("r06:%08X,r07:%08X,op:%s, ticks:%v", cast(u32)ucpu^.regs.r32.r06, cast(u32)ucpu^.regs.r32.r07, ite^.Mnemonic, ticks),
+            fmt.ctprintf(
+                "r06:%08X,r07:%08X,STOP:%08X,WT:%08X,op:%s, ticks:%v",
+                cast(u32)ucpu^.regs.r32.r06,
+                cast(u32)ucpu^.regs.r32.r07,
+                ult_cpu.read32_raw(&ucpu^.mem, ucpu, u32(ucpu^.regs.r32.SP)),
+                ucpu^.io.wait_accum,
+                ite^.Mnemonic,
+                ticks,
+            ),
             raylib.Vector2{0, 40},
             8,
             1,
@@ -123,6 +139,8 @@ main :: proc() {
         )
 
         draw_dbg_out(ucpu, font, 48)
+
+        raylib.DrawFPS(0, screenHeight - 20)
 
         raylib.EndDrawing()
 

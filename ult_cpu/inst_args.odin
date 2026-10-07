@@ -1,5 +1,6 @@
 package ult_cpu
 
+import "core:fmt"
 InstArg :: union {
     ImmArg,
     ImmPtrArg,
@@ -27,136 +28,136 @@ ArgMode :: enum u8 {
 }
 
 ArgList :: struct {
-    Arg1, Arg2, Arg3, Arg4: InstArg,
+    Arg1, Arg2, Arg3, Arg4:     InstArg,
     Mode1, Mode2, Mode3, Mode4: ArgMode,
 }
 
 InstArg_get_u8 :: proc(arg: ^InstArg, ucpu: ^Cpu) -> u8 {
     switch &v in arg {
-        case ImmArg: return ImmArg_get_u8(&v, ucpu)
-        case ImmPtrArg: return ImmPtrArg_get_u8(&v, ucpu)
-        case RegArg: return RegArg_get_u8(&v, ucpu)
-        case RegPtrArg: return RegPtrArg_get_u8(&v, ucpu)
-        case ImmPlusRegArg: return ImmPlusRegArg_get_u8(&v, ucpu)
-        case ImmPlusRegPtrArg: return ImmPlusRegPtrArg_get_u8(&v, ucpu)
-        case RegPlusRegArg: return RegPlusRegArg_get_u8(&v, ucpu)
-        case RegPlusRegPtrArg: return RegPlusRegPtrArg_get_u8(&v, ucpu)
-        case ImmMinusRegArg: return ImmMinusRegArg_get_u8(&v, ucpu)
-        case ImmMinusRegPtrArg: return ImmMinusRegPtrArg_get_u8(&v, ucpu)
-        case RegMinusRegArg: return RegMinusRegArg_get_u8(&v, ucpu)
-        case RegMinusRegPtrArg: return RegMinusRegPtrArg_get_u8(&v, ucpu)
-        case ImmTimesRegArg: return ImmTimesRegArg_get_u8(&v, ucpu)
-        case ImmTimesRegPtrArg: return ImmTimesRegPtrArg_get_u8(&v, ucpu)
-        case RegTimesRegArg: return RegTimesRegArg_get_u8(&v, ucpu)
-        case RegTimesRegPtrArg: return RegTimesRegPtrArg_get_u8(&v, ucpu)
+    case ImmArg: return ImmArg_get_u8(&v, ucpu)
+    case ImmPtrArg: return ImmPtrArg_get_u8(&v, ucpu)
+    case RegArg: return RegArg_get_u8(&v, ucpu)
+    case RegPtrArg: return RegPtrArg_get_u8(&v, ucpu)
+    case ImmPlusRegArg: return ImmPlusRegArg_get_u8(&v, ucpu)
+    case ImmPlusRegPtrArg: return ImmPlusRegPtrArg_get_u8(&v, ucpu)
+    case RegPlusRegArg: return RegPlusRegArg_get_u8(&v, ucpu)
+    case RegPlusRegPtrArg: return RegPlusRegPtrArg_get_u8(&v, ucpu)
+    case ImmMinusRegArg: return ImmMinusRegArg_get_u8(&v, ucpu)
+    case ImmMinusRegPtrArg: return ImmMinusRegPtrArg_get_u8(&v, ucpu)
+    case RegMinusRegArg: return RegMinusRegArg_get_u8(&v, ucpu)
+    case RegMinusRegPtrArg: return RegMinusRegPtrArg_get_u8(&v, ucpu)
+    case ImmTimesRegArg: return ImmTimesRegArg_get_u8(&v, ucpu)
+    case ImmTimesRegPtrArg: return ImmTimesRegPtrArg_get_u8(&v, ucpu)
+    case RegTimesRegArg: return RegTimesRegArg_get_u8(&v, ucpu)
+    case RegTimesRegPtrArg: return RegTimesRegPtrArg_get_u8(&v, ucpu)
     }
     return 0
 }
 
 InstArg_get_u16 :: proc(arg: ^InstArg, ucpu: ^Cpu) -> u16 {
     switch &v in arg {
-        case ImmArg: return ImmArg_get_u16(&v, ucpu)
-        case ImmPtrArg: return ImmPtrArg_get_u16(&v, ucpu)
-        case RegArg: return RegArg_get_u16(&v, ucpu)
-        case RegPtrArg: return RegPtrArg_get_u16(&v, ucpu)
-        case ImmPlusRegArg: return ImmPlusRegArg_get_u16(&v, ucpu)
-        case ImmPlusRegPtrArg: return ImmPlusRegPtrArg_get_u16(&v, ucpu)
-        case RegPlusRegArg: return RegPlusRegArg_get_u16(&v, ucpu)
-        case RegPlusRegPtrArg: return RegPlusRegPtrArg_get_u16(&v, ucpu)
-        case ImmMinusRegArg: return ImmMinusRegArg_get_u16(&v, ucpu)
-        case ImmMinusRegPtrArg: return ImmMinusRegPtrArg_get_u16(&v, ucpu)
-        case RegMinusRegArg: return RegMinusRegArg_get_u16(&v, ucpu)
-        case RegMinusRegPtrArg: return RegMinusRegPtrArg_get_u16(&v, ucpu)
-        case ImmTimesRegArg: return ImmTimesRegArg_get_u16(&v, ucpu)
-        case ImmTimesRegPtrArg: return ImmTimesRegPtrArg_get_u16(&v, ucpu)
-        case RegTimesRegArg: return RegTimesRegArg_get_u16(&v, ucpu)
-        case RegTimesRegPtrArg: return RegTimesRegPtrArg_get_u16(&v, ucpu)
+    case ImmArg: return ImmArg_get_u16(&v, ucpu)
+    case ImmPtrArg: return ImmPtrArg_get_u16(&v, ucpu)
+    case RegArg: return RegArg_get_u16(&v, ucpu)
+    case RegPtrArg: return RegPtrArg_get_u16(&v, ucpu)
+    case ImmPlusRegArg: return ImmPlusRegArg_get_u16(&v, ucpu)
+    case ImmPlusRegPtrArg: return ImmPlusRegPtrArg_get_u16(&v, ucpu)
+    case RegPlusRegArg: return RegPlusRegArg_get_u16(&v, ucpu)
+    case RegPlusRegPtrArg: return RegPlusRegPtrArg_get_u16(&v, ucpu)
+    case ImmMinusRegArg: return ImmMinusRegArg_get_u16(&v, ucpu)
+    case ImmMinusRegPtrArg: return ImmMinusRegPtrArg_get_u16(&v, ucpu)
+    case RegMinusRegArg: return RegMinusRegArg_get_u16(&v, ucpu)
+    case RegMinusRegPtrArg: return RegMinusRegPtrArg_get_u16(&v, ucpu)
+    case ImmTimesRegArg: return ImmTimesRegArg_get_u16(&v, ucpu)
+    case ImmTimesRegPtrArg: return ImmTimesRegPtrArg_get_u16(&v, ucpu)
+    case RegTimesRegArg: return RegTimesRegArg_get_u16(&v, ucpu)
+    case RegTimesRegPtrArg: return RegTimesRegPtrArg_get_u16(&v, ucpu)
     }
     return 0
 }
 
 InstArg_get_u32 :: proc(arg: ^InstArg, ucpu: ^Cpu) -> u32 {
     switch &v in arg {
-        case ImmArg: return ImmArg_get_u32(&v, ucpu)
-        case ImmPtrArg: return ImmPtrArg_get_u32(&v, ucpu)
-        case RegArg: return RegArg_get_u32(&v, ucpu)
-        case RegPtrArg: return RegPtrArg_get_u32(&v, ucpu)
-        case ImmPlusRegArg: return ImmPlusRegArg_get_u32(&v, ucpu)
-        case ImmPlusRegPtrArg: return ImmPlusRegPtrArg_get_u32(&v, ucpu)
-        case RegPlusRegArg: return RegPlusRegArg_get_u32(&v, ucpu)
-        case RegPlusRegPtrArg: return RegPlusRegPtrArg_get_u32(&v, ucpu)
-        case ImmMinusRegArg: return ImmMinusRegArg_get_u32(&v, ucpu)
-        case ImmMinusRegPtrArg: return ImmMinusRegPtrArg_get_u32(&v, ucpu)
-        case RegMinusRegArg: return RegMinusRegArg_get_u32(&v, ucpu)
-        case RegMinusRegPtrArg: return RegMinusRegPtrArg_get_u32(&v, ucpu)
-        case ImmTimesRegArg: return ImmTimesRegArg_get_u32(&v, ucpu)
-        case ImmTimesRegPtrArg: return ImmTimesRegPtrArg_get_u32(&v, ucpu)
-        case RegTimesRegArg: return RegTimesRegArg_get_u32(&v, ucpu)
-        case RegTimesRegPtrArg: return RegTimesRegPtrArg_get_u32(&v, ucpu)
+    case ImmArg: return ImmArg_get_u32(&v, ucpu)
+    case ImmPtrArg: return ImmPtrArg_get_u32(&v, ucpu)
+    case RegArg: return RegArg_get_u32(&v, ucpu)
+    case RegPtrArg: return RegPtrArg_get_u32(&v, ucpu)
+    case ImmPlusRegArg: return ImmPlusRegArg_get_u32(&v, ucpu)
+    case ImmPlusRegPtrArg: return ImmPlusRegPtrArg_get_u32(&v, ucpu)
+    case RegPlusRegArg: return RegPlusRegArg_get_u32(&v, ucpu)
+    case RegPlusRegPtrArg: return RegPlusRegPtrArg_get_u32(&v, ucpu)
+    case ImmMinusRegArg: return ImmMinusRegArg_get_u32(&v, ucpu)
+    case ImmMinusRegPtrArg: return ImmMinusRegPtrArg_get_u32(&v, ucpu)
+    case RegMinusRegArg: return RegMinusRegArg_get_u32(&v, ucpu)
+    case RegMinusRegPtrArg: return RegMinusRegPtrArg_get_u32(&v, ucpu)
+    case ImmTimesRegArg: return ImmTimesRegArg_get_u32(&v, ucpu)
+    case ImmTimesRegPtrArg: return ImmTimesRegPtrArg_get_u32(&v, ucpu)
+    case RegTimesRegArg: return RegTimesRegArg_get_u32(&v, ucpu)
+    case RegTimesRegPtrArg: return RegTimesRegPtrArg_get_u32(&v, ucpu)
     }
     return 0
 }
 
 InstArg_set_u8 :: proc(arg: ^InstArg, ucpu: ^Cpu, value: u8) {
     switch &v in arg {
-        case ImmArg: ImmArg_set_u8(&v, ucpu, value)
-        case ImmPtrArg: ImmPtrArg_set_u8(&v, ucpu, value)
-        case RegArg: RegArg_set_u8(&v, ucpu, value)
-        case RegPtrArg: RegPtrArg_set_u8(&v, ucpu, value)
-        case ImmPlusRegArg: ImmPlusRegArg_set_u8(&v, ucpu, value)
-        case ImmPlusRegPtrArg: ImmPlusRegPtrArg_set_u8(&v, ucpu, value)
-        case RegPlusRegArg: RegPlusRegArg_set_u8(&v, ucpu, value)
-        case RegPlusRegPtrArg: RegPlusRegPtrArg_set_u8(&v, ucpu, value)
-        case ImmMinusRegArg: ImmMinusRegArg_set_u8(&v, ucpu, value)
-        case ImmMinusRegPtrArg: ImmMinusRegPtrArg_set_u8(&v, ucpu, value)
-        case RegMinusRegArg: RegMinusRegArg_set_u8(&v, ucpu, value)
-        case RegMinusRegPtrArg: RegMinusRegPtrArg_set_u8(&v, ucpu, value)
-        case ImmTimesRegArg: ImmTimesRegArg_set_u8(&v, ucpu, value)
-        case ImmTimesRegPtrArg: ImmTimesRegPtrArg_set_u8(&v, ucpu, value)
-        case RegTimesRegArg: RegTimesRegArg_set_u8(&v, ucpu, value)
-        case RegTimesRegPtrArg: RegTimesRegPtrArg_set_u8(&v, ucpu, value)
+    case ImmArg: ImmArg_set_u8(&v, ucpu, value)
+    case ImmPtrArg: ImmPtrArg_set_u8(&v, ucpu, value)
+    case RegArg: RegArg_set_u8(&v, ucpu, value)
+    case RegPtrArg: RegPtrArg_set_u8(&v, ucpu, value)
+    case ImmPlusRegArg: ImmPlusRegArg_set_u8(&v, ucpu, value)
+    case ImmPlusRegPtrArg: ImmPlusRegPtrArg_set_u8(&v, ucpu, value)
+    case RegPlusRegArg: RegPlusRegArg_set_u8(&v, ucpu, value)
+    case RegPlusRegPtrArg: RegPlusRegPtrArg_set_u8(&v, ucpu, value)
+    case ImmMinusRegArg: ImmMinusRegArg_set_u8(&v, ucpu, value)
+    case ImmMinusRegPtrArg: ImmMinusRegPtrArg_set_u8(&v, ucpu, value)
+    case RegMinusRegArg: RegMinusRegArg_set_u8(&v, ucpu, value)
+    case RegMinusRegPtrArg: RegMinusRegPtrArg_set_u8(&v, ucpu, value)
+    case ImmTimesRegArg: ImmTimesRegArg_set_u8(&v, ucpu, value)
+    case ImmTimesRegPtrArg: ImmTimesRegPtrArg_set_u8(&v, ucpu, value)
+    case RegTimesRegArg: RegTimesRegArg_set_u8(&v, ucpu, value)
+    case RegTimesRegPtrArg: RegTimesRegPtrArg_set_u8(&v, ucpu, value)
     }
 }
 
 InstArg_set_u16 :: proc(arg: ^InstArg, ucpu: ^Cpu, value: u16) {
     switch &v in arg {
-        case ImmArg: ImmArg_set_u16(&v, ucpu, value)
-        case ImmPtrArg: ImmPtrArg_set_u16(&v, ucpu, value)
-        case RegArg: RegArg_set_u16(&v, ucpu, value)
-        case RegPtrArg: RegPtrArg_set_u16(&v, ucpu, value)
-        case ImmPlusRegArg: ImmPlusRegArg_set_u16(&v, ucpu, value)
-        case ImmPlusRegPtrArg: ImmPlusRegPtrArg_set_u16(&v, ucpu, value)
-        case RegPlusRegArg: RegPlusRegArg_set_u16(&v, ucpu, value)
-        case RegPlusRegPtrArg: RegPlusRegPtrArg_set_u16(&v, ucpu, value)
-        case ImmMinusRegArg: ImmMinusRegArg_set_u16(&v, ucpu, value)
-        case ImmMinusRegPtrArg: ImmMinusRegPtrArg_set_u16(&v, ucpu, value)
-        case RegMinusRegArg: RegMinusRegArg_set_u16(&v, ucpu, value)
-        case RegMinusRegPtrArg: RegMinusRegPtrArg_set_u16(&v, ucpu, value)
-        case ImmTimesRegArg: ImmTimesRegArg_set_u16(&v, ucpu, value)
-        case ImmTimesRegPtrArg: ImmTimesRegPtrArg_set_u16(&v, ucpu, value)
-        case RegTimesRegArg: RegTimesRegArg_set_u16(&v, ucpu, value)
-        case RegTimesRegPtrArg: RegTimesRegPtrArg_set_u16(&v, ucpu, value)
+    case ImmArg: ImmArg_set_u16(&v, ucpu, value)
+    case ImmPtrArg: ImmPtrArg_set_u16(&v, ucpu, value)
+    case RegArg: RegArg_set_u16(&v, ucpu, value)
+    case RegPtrArg: RegPtrArg_set_u16(&v, ucpu, value)
+    case ImmPlusRegArg: ImmPlusRegArg_set_u16(&v, ucpu, value)
+    case ImmPlusRegPtrArg: ImmPlusRegPtrArg_set_u16(&v, ucpu, value)
+    case RegPlusRegArg: RegPlusRegArg_set_u16(&v, ucpu, value)
+    case RegPlusRegPtrArg: RegPlusRegPtrArg_set_u16(&v, ucpu, value)
+    case ImmMinusRegArg: ImmMinusRegArg_set_u16(&v, ucpu, value)
+    case ImmMinusRegPtrArg: ImmMinusRegPtrArg_set_u16(&v, ucpu, value)
+    case RegMinusRegArg: RegMinusRegArg_set_u16(&v, ucpu, value)
+    case RegMinusRegPtrArg: RegMinusRegPtrArg_set_u16(&v, ucpu, value)
+    case ImmTimesRegArg: ImmTimesRegArg_set_u16(&v, ucpu, value)
+    case ImmTimesRegPtrArg: ImmTimesRegPtrArg_set_u16(&v, ucpu, value)
+    case RegTimesRegArg: RegTimesRegArg_set_u16(&v, ucpu, value)
+    case RegTimesRegPtrArg: RegTimesRegPtrArg_set_u16(&v, ucpu, value)
     }
 }
 
 InstArg_set_u32 :: proc(arg: ^InstArg, ucpu: ^Cpu, value: u32) {
     switch &v in arg {
-        case ImmArg: ImmArg_set_u32(&v, ucpu, value)
-        case ImmPtrArg: ImmPtrArg_set_u32(&v, ucpu, value)
-        case RegArg: RegArg_set_u32(&v, ucpu, value)
-        case RegPtrArg: RegPtrArg_set_u32(&v, ucpu, value)
-        case ImmPlusRegArg: ImmPlusRegArg_set_u32(&v, ucpu, value)
-        case ImmPlusRegPtrArg: ImmPlusRegPtrArg_set_u32(&v, ucpu, value)
-        case RegPlusRegArg: RegPlusRegArg_set_u32(&v, ucpu, value)
-        case RegPlusRegPtrArg: RegPlusRegPtrArg_set_u32(&v, ucpu, value)
-        case ImmMinusRegArg: ImmMinusRegArg_set_u32(&v, ucpu, value)
-        case ImmMinusRegPtrArg: ImmMinusRegPtrArg_set_u32(&v, ucpu, value)
-        case RegMinusRegArg: RegMinusRegArg_set_u32(&v, ucpu, value)
-        case RegMinusRegPtrArg: RegMinusRegPtrArg_set_u32(&v, ucpu, value)
-        case ImmTimesRegArg: ImmTimesRegArg_set_u32(&v, ucpu, value)
-        case ImmTimesRegPtrArg: ImmTimesRegPtrArg_set_u32(&v, ucpu, value)
-        case RegTimesRegArg: RegTimesRegArg_set_u32(&v, ucpu, value)
-        case RegTimesRegPtrArg: RegTimesRegPtrArg_set_u32(&v, ucpu, value)
+    case ImmArg: ImmArg_set_u32(&v, ucpu, value)
+    case ImmPtrArg: ImmPtrArg_set_u32(&v, ucpu, value)
+    case RegArg: RegArg_set_u32(&v, ucpu, value)
+    case RegPtrArg: RegPtrArg_set_u32(&v, ucpu, value)
+    case ImmPlusRegArg: ImmPlusRegArg_set_u32(&v, ucpu, value)
+    case ImmPlusRegPtrArg: ImmPlusRegPtrArg_set_u32(&v, ucpu, value)
+    case RegPlusRegArg: RegPlusRegArg_set_u32(&v, ucpu, value)
+    case RegPlusRegPtrArg: RegPlusRegPtrArg_set_u32(&v, ucpu, value)
+    case ImmMinusRegArg: ImmMinusRegArg_set_u32(&v, ucpu, value)
+    case ImmMinusRegPtrArg: ImmMinusRegPtrArg_set_u32(&v, ucpu, value)
+    case RegMinusRegArg: RegMinusRegArg_set_u32(&v, ucpu, value)
+    case RegMinusRegPtrArg: RegMinusRegPtrArg_set_u32(&v, ucpu, value)
+    case ImmTimesRegArg: ImmTimesRegArg_set_u32(&v, ucpu, value)
+    case ImmTimesRegPtrArg: ImmTimesRegPtrArg_set_u32(&v, ucpu, value)
+    case RegTimesRegArg: RegTimesRegArg_set_u32(&v, ucpu, value)
+    case RegTimesRegPtrArg: RegTimesRegPtrArg_set_u32(&v, ucpu, value)
     }
 }
 
@@ -292,7 +293,7 @@ RegPtrArg_set_u32 :: proc(arg: ^RegPtrArg, ucpu: ^Cpu, value: u32) {
 
 ImmPlusRegArg :: struct {
     value: u32,
-    reg: u8,
+    reg:   u8,
 }
 
 ImmPlusRegArg_get_u8 :: proc(arg: ^ImmPlusRegArg, ucpu: ^Cpu) -> u8 {
@@ -304,7 +305,9 @@ ImmPlusRegArg_get_u16 :: proc(arg: ^ImmPlusRegArg, ucpu: ^Cpu) -> u16 {
 }
 
 ImmPlusRegArg_get_u32 :: proc(arg: ^ImmPlusRegArg, ucpu: ^Cpu) -> u32 {
-    return arg^.value + u32(get_reg32(&ucpu^.regs, arg^.reg)^)
+    val := arg^.value
+    reg := arg^.reg
+    return val + u32(get_reg32(&ucpu^.regs, reg)^)
 }
 
 ImmPlusRegArg_set_u8 :: proc(arg: ^ImmPlusRegArg, ucpu: ^Cpu, value: u8) {
@@ -321,7 +324,7 @@ ImmPlusRegArg_set_u32 :: proc(arg: ^ImmPlusRegArg, ucpu: ^Cpu, value: u32) {
 
 ImmPlusRegPtrArg :: struct {
     value: u32,
-    reg: u8,
+    reg:   u8,
 }
 
 ImmPlusRegPtrArg_get_u8 :: proc(arg: ^ImmPlusRegPtrArg, ucpu: ^Cpu) -> u8 {
@@ -337,7 +340,10 @@ ImmPlusRegPtrArg_get_u16 :: proc(arg: ^ImmPlusRegPtrArg, ucpu: ^Cpu) -> u16 {
 }
 
 ImmPlusRegPtrArg_get_u32 :: proc(arg: ^ImmPlusRegPtrArg, ucpu: ^Cpu) -> u32 {
-    ptr := arg^.value + u32(get_reg32(&ucpu^.regs, arg^.reg)^)
+    imm := arg^.value
+    reg := arg^.reg
+    //fmt.printfln("[%08X+%02X]", imm, reg)
+    ptr := imm + u32(get_reg32(&ucpu^.regs, reg)^)
     val := read32(&ucpu^.mem, ucpu, ptr)
     return val
 }
@@ -432,7 +438,7 @@ RegPlusRegPtrArg_set_u32 :: proc(arg: ^RegPlusRegPtrArg, ucpu: ^Cpu, value: u32)
 
 ImmMinusRegArg :: struct {
     value: u32,
-    reg: u8,
+    reg:   u8,
 }
 
 ImmMinusRegArg_get_u8 :: proc(arg: ^ImmMinusRegArg, ucpu: ^Cpu) -> u8 {
@@ -461,7 +467,7 @@ ImmMinusRegArg_set_u32 :: proc(arg: ^ImmMinusRegArg, ucpu: ^Cpu, value: u32) {
 
 ImmMinusRegPtrArg :: struct {
     value: u32,
-    reg: u8,
+    reg:   u8,
 }
 
 ImmMinusRegPtrArg_get_u8 :: proc(arg: ^ImmMinusRegPtrArg, ucpu: ^Cpu) -> u8 {
@@ -572,7 +578,7 @@ RegMinusRegPtrArg_set_u32 :: proc(arg: ^RegMinusRegPtrArg, ucpu: ^Cpu, value: u3
 
 ImmTimesRegArg :: struct {
     value: u32,
-    reg: u8,
+    reg:   u8,
 }
 
 ImmTimesRegArg_get_u8 :: proc(arg: ^ImmTimesRegArg, ucpu: ^Cpu) -> u8 {
@@ -601,7 +607,7 @@ ImmTimesRegArg_set_u32 :: proc(arg: ^ImmTimesRegArg, ucpu: ^Cpu, value: u32) {
 
 ImmTimesRegPtrArg :: struct {
     value: u32,
-    reg: u8,
+    reg:   u8,
 }
 
 ImmTimesRegPtrArg_get_u8 :: proc(arg: ^ImmTimesRegPtrArg, ucpu: ^Cpu) -> u8 {
